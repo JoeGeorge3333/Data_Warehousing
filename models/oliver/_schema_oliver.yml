@@ -43,7 +43,7 @@ models:
   - name: sales
     description: Semantic sales model built from the Oliver star schema
 
-    - name: stg_employee_certifications
+  - name: stg_employee_certifications
     description: |
       Staging model for employee certification data sourced from Amazon S3 via Fivetran.
       Parses the raw certification_json field into discrete columns: certification_name,
