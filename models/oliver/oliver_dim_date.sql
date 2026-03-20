@@ -5,6 +5,11 @@ with distinct_dates as (
     select distinct cast(order_date as date) as date_id
     from {{ source('oliver_src', 'orders') }}
 
+    union
+
+    select distinct certification_awarded_date as date_id
+    from {{ ref('stg_employee_certifications') }}
+
 )
 
 select

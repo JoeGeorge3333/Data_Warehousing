@@ -4,9 +4,14 @@
 )}}
 
 select
-    CERTIFICATION_COMPLETION_ID,
+    certification_completion_id,
     employee_id,
-    parse_json(certification_json):certification_name::string as certification_name,
-    parse_json(certification_json):certification_cost::number as certification_cost,
-    parse_json(certification_json):certification_awarded_date::date as certification_awarded_date
-from {{ source('oliver_src', 'employee_certifications') }} 
+    first_name,
+    last_name,
+    email,
+    PARSE_JSON(certification_json):certification_name::varchar      as certification_name,
+    PARSE_JSON(certification_json):certification_cost::float        as certification_cost,
+    PARSE_JSON(certification_json):certification_awarded_date::date as certification_awarded_date,
+    _fivetran_synced
+
+from {{ source('oliver_src', 'employee_certifications') }}
