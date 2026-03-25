@@ -1,0 +1,244 @@
+version: 2
+
+sources:
+  # PostgreSQL RDS - Eco Essentials Transactional Database
+  - name: postgres_raw
+    description: "Raw data from Eco Essentials PostgreSQL RDS database via Fivetran"
+    database: "JOEGEORGE"  # Your Snowflake database
+    schema: "ECOESSENTIALS_TRANSACTIONAL_DB"  # PostgreSQL landing schema
+    tables:
+      - name: customers
+        description: "Customer master data from transactional system"
+        columns:
+          - name: _fivetran_id
+            description: "Fivetran unique identifier"
+            data_type: VARCHAR
+          - name: CUSTOMER_ID
+            description: "Unique customer identifier (primary key)"
+            data_type: NUMBER
+            tests:
+              - unique
+              - not_null
+          - name: CUSTOMER_FIRST_NAME
+            description: "Customer's first name"
+            data_type: VARCHAR
+          - name: CUSTOMER_LAST_NAME
+            description: "Customer's last name"
+            data_type: VARCHAR
+          - name: CUSTOMER_PHONE
+            description: "Customer phone number"
+            data_type: VARCHAR
+          - name: CUSTOMER_ADDRESS
+            description: "Street address"
+            data_type: VARCHAR
+          - name: CUSTOMER_CITY
+            description: "City"
+            data_type: VARCHAR
+          - name: CUSTOMER_STATE
+            description: "State/Province"
+            data_type: VARCHAR
+          - name: CUSTOMER_ZIP
+            description: "Postal code"
+            data_type: VARCHAR
+          - name: CUSTOMER_COUNTRY
+            description: "Country"
+            data_type: VARCHAR
+          - name: CUSTOMER_EMAIL
+            description: "Customer email address"
+            data_type: VARCHAR
+          - name: _fivetran_deleted
+            description: "Flag indicating if record was deleted"
+            data_type: BOOLEAN
+          - name: _fivetran_synced
+            description: "Timestamp when Fivetran synced this record"
+            data_type: TIMESTAMP_NTZ
+
+      - name: orders
+        description: "Order header data"
+        columns:
+          - name: _fivetran_id
+            description: "Fivetran unique identifier"
+            data_type: VARCHAR
+          - name: ORDER_ID
+            description: "Unique order identifier (primary key)"
+            data_type: NUMBER
+            tests:
+              - unique
+              - not_null
+          - name: CUSTOMER_ID
+            description: "Foreign key to customers table"
+            data_type: NUMBER
+            tests:
+              - not_null
+          - name: ORDER_TIMESTAMP
+            description: "Date and time when order was placed"
+            data_type: TIMESTAMP_NTZ
+          - name: _fivetran_deleted
+            description: "Flag indicating if record was deleted"
+            data_type: BOOLEAN
+          - name: _fivetran_synced
+            description: "Timestamp when Fivetran synced this record"
+            data_type: TIMESTAMP_NTZ
+
+      - name: order_lines
+        description: "Order line items (products in orders)"
+        columns:
+          - name: _fivetran_id
+            description: "Fivetran unique identifier"
+            data_type: VARCHAR
+          - name: ORDER_LINE_ID
+            description: "Unique order line identifier (primary key)"
+            data_type: NUMBER
+            tests:
+              - unique
+              - not_null
+          - name: ORDER_ID
+            description: "Foreign key to orders table"
+            data_type: NUMBER
+            tests:
+              - not_null
+          - name: PRODUCT_ID
+            description: "Foreign key to products table"
+            data_type: NUMBER
+            tests:
+              - not_null
+          - name: CAMPAIGN_ID
+            description: "Foreign key to campaigns table"
+            data_type: NUMBER
+          - name: QUANTITY
+            description: "Number of units ordered"
+            data_type: NUMBER
+            tests:
+              - not_null
+          - name: DISCOUNT
+            description: "Discount percentage applied (0-1 range)"
+            data_type: FLOAT
+          - name: PROMOTIONAL_CAMPAIGN
+            description: "Flag indicating if order was part of promotion"
+            data_type: BOOLEAN
+          - name: PRICE_AFTER_DISCOUNT
+            description: "Unit price after discount applied"
+            data_type: FLOAT
+          - name: _fivetran_deleted
+            description: "Flag indicating if record was deleted"
+            data_type: BOOLEAN
+          - name: _fivetran_synced
+            description: "Timestamp when Fivetran synced this record"
+            data_type: TIMESTAMP_NTZ
+
+      - name: products
+        description: "Product master data"
+        columns:
+          - name: _fivetran_id
+            description: "Fivetran unique identifier"
+            data_type: VARCHAR
+          - name: PRODUCT_ID
+            description: "Unique product identifier (primary key)"
+            data_type: NUMBER
+            tests:
+              - unique
+              - not_null
+          - name: PRODUCT_TYPE
+            description: "Category or type of product"
+            data_type: VARCHAR
+          - name: PRODUCT_NAME
+            description: "Product display name"
+            data_type: VARCHAR
+          - name: PRICE
+            description: "Base product price"
+            data_type: FLOAT
+          - name: _fivetran_deleted
+            description: "Flag indicating if record was deleted"
+            data_type: BOOLEAN
+          - name: _fivetran_synced
+            description: "Timestamp when Fivetran synced this record"
+            data_type: TIMESTAMP_NTZ
+
+      - name: campaigns
+        description: "Marketing campaign master data"
+        columns:
+          - name: _fivetran_id
+            description: "Fivetran unique identifier"
+            data_type: VARCHAR
+          - name: CAMPAIGN_ID
+            description: "Unique campaign identifier (primary key)"
+            data_type: NUMBER
+            tests:
+              - unique
+              - not_null
+          - name: CAMPAIGN_NAME
+            description: "Campaign name/description"
+            data_type: VARCHAR
+          - name: CAMPAIGN_DISCOUNT
+            description: "Discount percentage for campaign (0-1 range)"
+            data_type: FLOAT
+          - name: _fivetran_deleted
+            description: "Flag indicating if record was deleted"
+            data_type: BOOLEAN
+          - name: _fivetran_synced
+            description: "Timestamp when Fivetran synced this record"
+            data_type: TIMESTAMP_NTZ
+
+  # Amazon S3 - Salesforce Marketing Cloud Email Events
+  - name: s3_raw
+    description: "Raw data from Salesforce Marketing Cloud email events via Fivetran S3 connector"
+    database: "JOEGEORGE"  # Your Snowflake database
+    schema: "ECO_ESSENTIALS_SOURCE"  # S3 landing schema
+    tables:
+      - name: marketing_emails
+        description: "Salesforce Marketing Cloud email event data (sends, opens, clicks, etc.)"
+        columns:
+          - name: _FILE
+            description: "Source file name"
+            data_type: VARCHAR
+          - name: _LINE
+            description: "Line number in source file"
+            data_type: NUMBER
+          - name: _MODIFIED
+            description: "File modification date"
+            data_type: TIMESTAMP_NTZ
+          - name: _FIVETRAN_SYNCED
+            description: "Timestamp when Fivetran synced this record"
+            data_type: TIMESTAMP_NTZ
+          - name: EMAILEVENTID
+            description: "Unique email event identifier"
+            data_type: NUMBER
+            tests:
+              - unique
+              - not_null
+          - name: EMAILID
+            description: "Email template ID"
+            data_type: NUMBER
+          - name: EMAILNAME
+            description: "Email template name"
+            data_type: VARCHAR
+          - name: CAMPAIGNID
+            description: "Marketing campaign ID"
+            data_type: NUMBER
+          - name: CAMPAIGNNAME
+            description: "Marketing campaign name"
+            data_type: VARCHAR
+          - name: CUSTOMERID
+            description: "Customer ID from Salesforce"
+            data_type: NUMBER
+          - name: SUBSCRIBERID
+            description: "Subscriber/contact ID"
+            data_type: NUMBER
+          - name: SUBSCRIBEREMAIL
+            description: "Subscriber email address"
+            data_type: VARCHAR
+          - name: SUBSCRIBERFIRSTNAME
+            description: "Subscriber first name"
+            data_type: VARCHAR
+          - name: SUBSCRIBERLASTNAME
+            description: "Subscriber last name"
+            data_type: VARCHAR
+          - name: SENDTIMESTAMP
+            description: "Timestamp when email was sent"
+            data_type: TIMESTAMP_NTZ
+          - name: EVENTTYPE
+            description: "Type of event (SENT, OPEN, CLICK, BOUNCE, UNSUBSCRIBE, etc.)"
+            data_type: VARCHAR
+          - name: EVENTTIMESTAMP
+            description: "Timestamp when the event occurred"
+            data_type: TIMESTAMP_NTZ
