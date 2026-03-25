@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: insurance_landing
-    database: firstnamelastname
+    database: JoeGeorge
     schema: insurance_dw_source
     tables:
       - name: agents
