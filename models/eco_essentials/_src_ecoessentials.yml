@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: ecoessentials_landing
+    database: joegeorge
+    schema: ECOESSENTIALS_TRANSACTIONAL_DB
+    tables:
+      - name: customer
+      - name: order_line
+      - name: order
+        identifier: '"ORDER"'
+      - name: product
+      - name: promotional_campaign
+
+  - name: ecoessentials_landing_emails
+    database: joegeorge
+    schema: ECO_ESSENTIALS_SOURCE
+    tables:
+      - name: marketingemails

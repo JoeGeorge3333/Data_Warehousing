@@ -41,7 +41,7 @@ select
     fs.dollars_sold,
     fs.unit_price
 
-from {{ ref('fact_sales') }} fs
+from {{ ref('fact_dim_sales') }} fs
 left join {{ ref('oliver_dim_customer') }} c
     on fs.cust_key = c.cust_key
 left join {{ ref('oliver_dim_date') }} d
