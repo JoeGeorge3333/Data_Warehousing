@@ -6,6 +6,7 @@ models:
     columns:
       - name: cust_key
         tests:
+          - unique
           - not_null
 
   - name: oliver_dim_product
@@ -13,6 +14,7 @@ models:
     columns:
       - name: product_key
         tests:
+          - unique
           - not_null
 
   - name: oliver_dim_employee
@@ -20,6 +22,7 @@ models:
     columns:
       - name: employee_key
         tests:
+          - unique
           - not_null
 
   - name: oliver_dim_store
@@ -27,6 +30,7 @@ models:
     columns:
       - name: store_key
         tests:
+          - unique
           - not_null
 
   - name: oliver_dim_date
@@ -39,6 +43,22 @@ models:
 
   - name: fact_sales
     description: Sales fact table at the order line grain
+    columns:
+      - name: cust_key
+        tests:
+          - not_null
+      - name: product_key
+        tests:
+          - not_null
+      - name: employee_key
+        tests:
+          - not_null
+      - name: store_key
+        tests:
+          - not_null
+      - name: date_key
+        tests:
+          - not_null
 
   - name: sales
     description: Semantic sales model built from the Oliver star schema
@@ -49,9 +69,22 @@ models:
       Parses the raw certification_json field into discrete columns: certification_name,
       certification_cost, and certification_awarded_date.
       Each record represents one certification awarded to one employee.
+    columns:
+      - name: employee_key
+        tests:
+          - not_null
 
   - name: fact_certification
     description: |
       Employee Certification Fact.
       The grain of this table is employee + certification name + awarded date.
       Each record represents a single certification awarded to an employee on a given date.
+    columns:
+      - name: employee_key
+        tests:
+          - not_null
+
+
+ 
+
+
