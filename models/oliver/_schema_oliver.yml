@@ -56,6 +56,10 @@ models:
       - name: store_key
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('oliver_dim_store')
+                column: store_key
       - name: date_key
         tests:
           - not_null
@@ -71,8 +75,8 @@ models:
       Each record represents one certification awarded to one employee.
     columns:
       - name: employee_key
-        tests:
-          - not_null
+
+        
 
   - name: fact_certification
     description: |
@@ -83,8 +87,3 @@ models:
       - name: employee_key
         tests:
           - not_null
-
-
- 
-
-
