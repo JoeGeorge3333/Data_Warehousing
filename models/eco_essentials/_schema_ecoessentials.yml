@@ -1,0 +1,227 @@
+version: 2
+ 
+models:
+  - name: eco_dim_event
+    description: Event dimension table for marketing email events
+    columns:
+      - name: event_key
+        description: Surrogate key for events
+        tests:
+          - unique
+          - not_null
+      - name: event_type
+        description: Type of email event
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['click', 'open', 'send']
+ 
+  - name: eco_dim_product
+    description: Product dimension table
+    columns:
+      - name: product_key
+        description: Surrogate key for products
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: Business key for product
+        tests:
+          - not_null
+      - name: product_type
+        description: Type of product
+        tests:
+          - not_null
+      - name: product_name
+        description: Name of product
+        tests:
+          - not_null
+ 
+  - name: eco_dim_customer
+    description: Customer dimension table
+    columns:
+      - name: cust_key
+        description: Surrogate key for customers
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Business key for customer
+      - name: customer_firstname
+        description: Customer first name
+      - name: customer_lastname
+        description: Customer last name
+      - name: customer_email
+        description: Customer email address
+        tests:
+          - not_null
+      - name: customer_address
+        description: Customer street address
+      - name: customer_city
+        description: Customer city
+      - name: customer_state
+        description: Customer state
+      - name: customer_zip
+        description: Customer ZIP code
+      - name: customer_country
+        description: Customer country
+      - name: is_subscriber
+        description: Whether customer is email subscriber
+ 
+  - name: eco_dim_date
+    description: Date dimension table for temporal analysis
+    columns:
+      - name: date_key
+        description: Surrogate key for dates
+        tests:
+          - unique
+          - not_null
+      - name: date
+        description: Calendar date
+        tests:
+          - not_null
+          - unique
+ 
+  - name: eco_dim_campaign
+    description: Campaign dimension table
+    columns:
+      - name: campaign_key
+        description: Surrogate key for campaigns
+        tests:
+          - unique
+          - not_null
+      - name: campaign_id
+        description: Business key for campaign
+      - name: campaign_name
+        description: Campaign name
+ 
+  - name: eco_dim_email
+    description: Email dimension table
+    columns:
+      - name: email_key
+        description: Surrogate key for emails
+        tests:
+          - unique
+          - not_null
+      - name: subscriber_id
+        description: Subscriber identifier
+      - name: email_address
+        description: Email address
+        tests:
+          - not_null
+ 
+  - name: eco_dim_email_timestamp
+    description: Email timestamp dimension
+    columns:
+      - name: email_timestamp_key
+        description: Surrogate key
+        tests:
+          - unique
+          - not_null
+      - name: timestamp
+        description: Email timestamp
+        tests:
+          - not_null
+ 
+  - name: eco_fact_order
+    description: Order fact table
+    columns:
+      - name: product_key
+        description: Foreign key to product dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_product')
+                field: product_key
+      - name: campaign_key
+        description: Foreign key to campaign dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_campaign')
+                field: campaign_key
+      - name: cust_key
+        description: Foreign key to customer dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_customer')
+                field: cust_key
+      - name: date_key
+        description: Foreign key to date dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_date')
+                field: date_key
+      - name: quantity
+        description: Order quantity
+        tests:
+          - not_null
+      - name: discount
+        description: Discount applied
+      - name: price
+        description: Original price
+        tests:
+          - not_null
+      - name: final_price
+        description: Price after discount
+        tests:
+          - not_null
+      - name: order_id
+        description: Order identifier
+        tests:
+          - not_null
+          - unique
+ 
+  - name: eco_fact_email_event
+    description: Email event fact table
+    columns:
+      - name: event_key
+        description: Foreign key to event dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_event')
+                field: event_key
+      - name: email_key
+        description: Foreign key to email dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_email')
+                field: email_key
+      - name: cust_key
+        description: Foreign key to customer dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_customer')
+                field: cust_key
+      - name: date_key
+        description: Foreign key to date dimension
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('eco_dim_date')
+                field: date_key
+      - name: event_type
+        description: Type of email event
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['click', 'open', 'send']
+      - name: email_address
+        description: Email address
+        tests:
+          - not_null
