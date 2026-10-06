@@ -1,6 +1,6 @@
 # DATA 5360 — Dimensional Data Warehousing with dbt & Snowflake
 
-**Author:** Eric Pesci  
+**Author:** Joe George
 **Program:** Information Systems, Utah State University  
 **Course:** DATA 5360 — Data Warehousing  
 **Tools:** dbt Cloud · Snowflake · SQL · YAML · FiveTran
